@@ -44,7 +44,7 @@ const ButtonList = () => {
     <div className="flex w-full overflow-x-auto scrollbar-hide scroll-smooth relative">
       {canScrollLeft && (
         <button
-          className="bg-gray-300 border-none p-2 cursor-pointer absolute left-0 top-1/2 transform -translate-y-1/2"
+          className="bg-black text-white border-none p-2 cursor-pointer absolute left-0 top-1/2 transform -translate-y-1/2"
           onClick={scrollLeft}
         >
           {"<"}
@@ -60,7 +60,7 @@ const ButtonList = () => {
       </div>
       {canScrollRight && (
         <button
-          className="bg-gray-300 border-none p-2 cursor-pointer ml-2 absolute right-0 top-1/2 transform -translate-y-1/2"
+          className="bg-black text-white border-none p-2 cursor-pointer ml-2 absolute right-0 top-1/2 transform -translate-y-1/2"
           onClick={scrollRight}
         >
           {">"}
