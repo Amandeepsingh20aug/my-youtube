@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 const Sidebar = () => {
   const showSideBar = useSelector((store)=>store.app.isMenuOpen)
   return (
-   showSideBar && <div className='p-5 shadow-lg bg-white w-48'>
+   showSideBar && <div className='p-5 shadow-lg bg-white w-60'>
     <ul>
         <li>Home</li>
         <li>Shorts</li>

@@ -9,6 +9,7 @@ const ButtonList = () => {
   const scrollContainerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [selectButton,setSelectButton] = useState(0)
   const scrollLeft = () => {
     scrollContainerRef.current.scrollBy({
       left: -200,
@@ -28,6 +29,10 @@ const ButtonList = () => {
     setCanScrollLeft(scrollLeft > 0);
     setCanScrollRight(Math.round(scrollLeft) < scrollWidth - clientWidth);
   };
+
+  const handleClick = (index)=>{
+    setSelectButton(index)
+  }
 
   useEffect(() => {
     updateScrollButtons();
@@ -54,8 +59,8 @@ const ButtonList = () => {
         className="flex w-full overflow-x-auto scrollbar-hide scroll-smooth whitespace-nowrap"
         ref={scrollContainerRef}
       >
-        {list.map((name) => (
-          <Button text={name} key={name} />
+        {list.map((name,index) => (
+          <Button text={name} key={name} onClick={()=>handleClick(index)} select={index === selectButton }/>
         ))}
       </div>
       {canScrollRight && (
