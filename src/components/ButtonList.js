@@ -25,9 +25,10 @@ const ButtonList = () => {
   };
 
   const updateScrollButtons = () => {
+    if (!scrollContainerRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
     setCanScrollLeft(scrollLeft > 0);
-    setCanScrollRight(Math.round(scrollLeft) < scrollWidth - clientWidth);
+    setCanScrollRight(Math.ceil(scrollLeft) < scrollWidth - clientWidth);
   };
 
   const handleClick = (index)=>{
@@ -35,13 +36,15 @@ const ButtonList = () => {
   }
 
   useEffect(() => {
-    updateScrollButtons();
-    scrollContainerRef.current.addEventListener("scroll", updateScrollButtons);
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      updateScrollButtons();
+      scrollContainer.addEventListener("scroll", updateScrollButtons);
+    }
     return () => {
-      scrollContainerRef.current.removeEventListener(
-        "scroll",
-        updateScrollButtons
-      );
+      if (scrollContainer) {
+        scrollContainer.removeEventListener("scroll", updateScrollButtons);
+      }
     };
   }, [showSideBar]);
 

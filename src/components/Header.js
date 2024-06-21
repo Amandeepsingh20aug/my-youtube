@@ -1,15 +1,52 @@
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toogleMenu } from "../utils/appSlice";
+import { YOUTUBE_SEARCH_API } from "../utils/constant";
 
 const Header = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const[suggestions,setSuggestions] = useState([]);
   const dispatch = useDispatch();
+  const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      getsearchSuggestions();
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (inputRef.current && dropdownRef.current) {
+      dropdownRef.current.style.width = `${inputRef.current.offsetWidth}px`;
+      dropdownRef.current.style.left = `${inputRef.current.offsetLeft}px`;
+    }
+  }, [suggestions]);
+
+
+  const getsearchSuggestions = async () => {
+    try {
+      console.log(searchQuery,'API CALL');
+      const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
+      const json = await data.json();
+      setSuggestions(json[1]);
+    } catch (error) {}
+  };
 
   const handlesidebar = () => {
     dispatch(toogleMenu());
   };
+
+  const handleBlur = () =>{
+    setSuggestions([]);
+    setSearchQuery("");
+  }
 
   return (
     <div className="grid grid-flow-col p-5 shadow-lg items-center">
@@ -26,15 +63,29 @@ const Header = () => {
           className="h-11 mx-2"
         />
       </div>
-      <div className="col-span-10 flex justify-center items-center ">
-        <input
-          type="text"
-          className="w-1/2 border border-gray-400 py-2 px-5 rounded-l-full outline-none"
-          placeholder="Search"
-        />
-        <button className="border border-gray-400 py-2 px-5 rounded-r-full bg-gray-100">
-          <FontAwesomeIcon icon={faMagnifyingGlass} beat />
-        </button>
+      <div className="col-span-10 flex justify-center items-center flex-col">
+        <div className="w-full justify-center flex relative">
+          <input
+            type="text"
+            className="w-1/2 border border-gray-400 py-2 px-5 rounded-l-full outline-none"
+            placeholder="Search"
+            value={searchQuery}
+            ref={inputRef}
+            onBlur={handleBlur}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button className="border border-gray-400 py-2 px-5 rounded-r-full bg-gray-100">
+            <FontAwesomeIcon icon={faMagnifyingGlass} beat />
+          </button>
+          {suggestions.length > 0 && <div  className="absolute top-full bg-white border border-gray-200 rounded-md shadow-lg z-10"
+             ref={dropdownRef}>
+            <ul className="list-none py-2 px-2 cursor-pointer">
+            {suggestions.map((item)=>(
+              <li className="py-2 px-2 shadow-sm hover:bg-gray-100" key={item}>{item}</li>
+            ))}
+            </ul>
+          </div>}
+        </div>
       </div>
       <div className="col-span-1">
         <img
