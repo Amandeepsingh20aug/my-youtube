@@ -1,9 +1,10 @@
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toogleMenu } from "../utils/appSlice";
 import { YOUTUBE_SEARCH_API } from "../utils/constant";
+import { cacheResults } from "../utils/searchSlice";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,10 +12,15 @@ const Header = () => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
+  const searchCache = useSelector((store)=>store.search);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      getsearchSuggestions();
+      if(searchCache[searchQuery]) {
+        setSuggestions(searchCache[searchQuery])
+      } else {
+        getsearchSuggestions();
+      }
     }, 200);
 
     return () => {
@@ -32,10 +38,10 @@ const Header = () => {
 
   const getsearchSuggestions = async () => {
     try {
-      console.log(searchQuery,'API CALL');
       const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
       const json = await data.json();
       setSuggestions(json[1]);
+      dispatch(cacheResults({[searchQuery] : json[1] }));
     } catch (error) {}
   };
 
@@ -45,7 +51,6 @@ const Header = () => {
 
   const handleBlur = () =>{
     setSuggestions([]);
-    setSearchQuery("");
   }
 
   return (
