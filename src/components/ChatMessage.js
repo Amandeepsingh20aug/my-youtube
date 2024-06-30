@@ -10,7 +10,7 @@ const ChatMessage = ({name,message}) => {
         />
         <span className='font-bold px-2'>{name} :</span>
         <span>{message}</span>
-    </div>
+t    </div>
   )
 }
 
